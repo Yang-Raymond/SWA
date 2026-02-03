@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="StudentFunctions/StudentFunctions.csproj" />
+  <Project Path="StudentsBlazor/StudentsBlazor.csproj" />
+  <Project Path="StudentsLibrary/StudentsLibrary.csproj" />
+</Solution>

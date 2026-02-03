@@ -1,0 +1,70 @@
+﻿@page "/update/{id}/{mode}"
+@using StudentsLibrary
+@inject HttpClient httpClient
+@inject NavigationManager NavManager
+
+<p>Student with ID == @Id</p>
+
+@if (student != null && Mode == "edit") // Update
+{
+<h1>UPDATE</h1>
+<EditForm Model="@student" OnValidSubmit="@HandleUpdate">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+        <InputText placeholder="First Name" id="firstName" @bind-Value="@student!.FirstName" />
+        <br />
+        <InputText placeholder="Last Name" id="lastName" @bind-Value="@student.LastName" />
+        <br />
+        <InputText placeholder="School" id="school" @bind-Value="@student.School" />
+        <br />
+        <button type="submit" class="btn btn-success">Submit</button>
+
+    @code {
+        private async void HandleUpdate()
+        {
+            await httpClient.PutAsJsonAsync($"students/{Id}", student);
+
+            NavManager.NavigateTo("/students");
+        }
+    }
+</EditForm>
+}
+
+@if (student != null && Mode == "delete") // Delete form
+{
+<h1>Delete</h1>
+<EditForm Model="@student" OnValidSubmit="@HandleDelete">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+        <InputText placeholder="First Name" id="firstName" @bind-Value="@student.FirstName" />
+        <br />
+        <InputText placeholder="Last Name" id="lastName" @bind-Value="@student.LastName" />
+        <br />
+        <InputText placeholder="School" id="school" @bind-Value="@student.School" />
+        <br />
+        <button type="submit" value="Delete" class="btn btn-danger">Submit</button>
+
+    @code {
+        protected async void HandleDelete()
+        {
+            await httpClient.DeleteAsync($"students/{Id}");
+            NavManager.NavigateTo("/students");
+        }
+    }
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string? Mode { get; set; }
+    Student? student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        student = await httpClient.GetFromJsonAsync<Student>($"students/{Id}");
+    }
+}
